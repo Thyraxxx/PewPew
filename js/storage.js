@@ -65,6 +65,10 @@ const FaceStorage = {
       croppedImg.full = full;
       croppedImg.fullCfg = assetDef.overlay || null;
 
+      // Release the big original photo right away (it can be 10+ MB decoded) so phones don't run out of memory
+      img.onload = img.onerror = null;
+      img.src = '';
+
       onComplete(croppedImg, dataUrl);
     };
     img.onerror = () => {
@@ -89,13 +93,38 @@ const FaceStorage = {
     } catch (err) { this.custom = {}; }
   },
 
-  saveCustom() {
+  // Show a status line under the photo slots (red when something is wrong)
+  say(text, bad) {
     const msg = $('msg');
+    if (!msg) return;
+    msg.textContent = text;
+    msg.style.color = bad ? '#ff6b6b' : '';
+    msg.style.fontWeight = bad ? '700' : '';
+  },
+
+  // True if this browser really keeps data between visits (private mode, in-app browsers
+  // and some file:// setups silently throw it away)
+  canPersist() {
     try {
-      localStorage.setItem(CONFIG.storage.key, JSON.stringify(this.custom));
-      if (msg) msg.textContent = 'Saved in this browser. Photos never leave your device.';
+      const t = CONFIG.storage.key + '.test';
+      localStorage.setItem(t, '1');
+      const ok = localStorage.getItem(t) === '1';
+      localStorage.removeItem(t);
+      return ok;
+    } catch (err) { return false; }
+  },
+
+  saveCustom() {
+    try {
+      const data = JSON.stringify(this.custom);
+      localStorage.setItem(CONFIG.storage.key, data);
+      // Read it back to be sure it really stuck
+      if (localStorage.getItem(CONFIG.storage.key) !== data) throw new Error('verify failed');
+      this.say('Saved in this browser. Photos never leave your device.', false);
+      return true;
     } catch (err) {
-      if (msg) msg.textContent = 'Could not save (browser storage full or blocked). Photos last until you close the page.';
+      this.say('NOT saved: this browser is blocking or has no room for storage (private mode, in-app browser, or full). The photo works until you close or reload the page.', true);
+      return false;
     }
   },
 
@@ -329,6 +358,9 @@ const FaceStorage = {
     this.setupCropperUI();
     this.loadCustom();
     this.loadAllAssets();
+    if (!this.canPersist()) {
+      this.say('Warning: this browser will not remember uploaded photos after reload (private mode, in-app browser, or blocked storage). Open the game in a normal Chrome/Safari tab.', true);
+    }
 
     const fi = $('slot-file');
     if (fi) {

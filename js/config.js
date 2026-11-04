@@ -87,30 +87,33 @@ const CONFIG = {
     // Player Reactive Faces
     playerstare: {
       path: 'assets/player/playerstare.jpg',
-      cx: 0.36, cy: 0.30, size: 0.36, rotation: 0, flipX: false,
+      cx: 0.45, cy: 0.39, size: 0.45, rotation: 0, flipX: false,
+      overlay: { scaleWithHead: false },
       desc: 'Idle'
     },
     playerbang: {
       path: 'assets/player/playerbang.jpg',
-      cx: 0.38, cy: 0.58, size: 0.46, rotation: 0, flipX: false,
+      cx: 0.38, cy: 0.42, size: 0.46, rotation: 0, flipX: false,
+      overlay: { scaleWithHead: false },
       desc: 'Bangbang'
     },
     playerdone: {
       path: 'assets/player/playerdone.jpg',
-      cx: 0.52, cy: 0.56, size: 0.44, rotation: 0, flipX: false,
+      cx: 0.5, cy: 0.42, size: 0.45, rotation: 0, flipX: false,
+      overlay: { scaleWithHead: false },
       desc: '(Game Over)'
     },
     playerclear: {
       path: 'assets/player/playerclear.jpg',
-      cx: 0.46, cy: 0.32, size: 0.36, rotation: 0, flipX: false,
+      cx: 0.5, cy: 0.42, size: 0.45, rotation: 0, flipX: false,
+      overlay: { scaleWithHead: false },
       desc: 'Wave Clear Celebrate'
     },
 
     // Enemy Faces
     standard: {
       path: 'assets/enemies/standard.jpg',
-      cx: 0.44, cy: 0.36, size: 0.42, rotation: 0, flipX: false,
-      overlay: { maxW: 100, maxH: 90 },   // landscape photo: allow wider
+      cx: 0.5, cy: 0.36, size: 0.56, rotation: 0, flipX: false,
       desc: 'Ok lng'
     },
     runner: {
@@ -120,12 +123,12 @@ const CONFIG = {
     },
     sidestep: {
       path: 'assets/enemies/sidestep.jpg',
-      cx: 0.47, cy: 0.30, size: 0.44, rotation: 0, flipX: false,
+      cx: 0.49, cy: 0.41, size: 0.45, rotation: 0, flipX: false,
       desc: 'Dodgerist'
     },
     barrier: {
       path: 'assets/enemies/barrier.jpg',
-      cx: 0.58, cy: 0.42, size: 0.40, rotation: 0, flipX: false,
+      cx: 0.52, cy: 0.42, size: 0.45, rotation: 0, flipX: false,
       desc: 'Invulnerable barrier caster'
     },
     door: {
@@ -135,13 +138,14 @@ const CONFIG = {
     },
     sleep: {
       path: 'assets/enemies/sleep.jpg',
-      cx: 0.43, cy: 0.48, size: 0.48, rotation: 0, flipX: true,
+      cx: 0.45, cy: 0.48, size: 0.5, rotation: 0, flipX: true,
+      overlay: { scaleWithHead: false },
       desc: 'Slow tanky snoozer'
     },
     enemy: {
       path: 'assets/enemies/enemy.jpg',
-      cx: 0.52, cy: 0.42, size: 0.50, rotation: 0, flipX: false,
-      overlay: { maxW: 100, maxH: 90 },
+      cx: 0.5, cy: 0.42, size: 0.67, rotation: 0, flipX: false,
+      overlay: { maxW: 96, maxH: 108, scaleWithHead: false },   // boss: about 20% bigger
       desc: 'Bossing every 5 waves (initial 10 HP, +5 every 5 waves)'
     }
   },
