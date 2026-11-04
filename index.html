@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Face Shooter - Track Defense</title>
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Top App Header with Fullscreen & Audio controls -->
+  <header class="app-header">
+    <h1>🏃 Face Shooter: Track Defense</h1>
+    <div class="header-actions">
+      <!-- Volume Adjuster -->
+      <div class="volume-box" title="Master Volume">
+        <label for="volume-slider">🔊</label>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.7">
+      </div>
+      <button id="sfx-btn" class="icon-btn" title="Toggle Sound">Mute</button>
+      <button id="fs-btn" class="icon-btn" title="Toggle Fullscreen">⛶ Fullscreen</button>
+    </div>
+  </header>
+
+  <!-- High-Contrast 2.5D School Sports Field Game Canvas (680 x 410) -->
+  <main class="game-viewport">
+    <canvas id="c" width="680" height="464"></canvas>
+  </main>
+
+  <!-- Responsive Controls Dock: Mobile Two-Thumb / PC Bottom Dock -->
+  <section class="controls-dock" aria-label="Game Controls">
+    <!-- Left Thumb: Movement D-Pad -->
+    <div class="thumb-cluster cluster-left">
+      <div class="pad">
+        <span></span><button id="u" aria-label="Up">▲</button><span></span>
+        <button id="l" aria-label="Left">◀</button><button id="d" aria-label="Down">▼</button><button id="r" aria-label="Right">▶</button>
+      </div>
+    </div>
+
+    <!-- Center: Start Game Button -->
+    <div class="cluster-center">
+      <button id="go" class="main start-btn">Start</button>
+    </div>
+
+    <!-- Right Thumb: BANG Trigger, Reload & Auto-Fire Switch -->
+    <div class="thumb-cluster cluster-right">
+      <div class="action-buttons-row">
+        <button id="fire" class="main bang-btn" aria-label="Shoot">BANG</button>
+        <button id="reload-btn" class="b reload-btn" aria-label="Reload">🔄 Reload</button>
+        <button id="skill-btn" class="b reload-btn" aria-label="Burst skill">⚡ Burst (1)</button>
+      </div>
+      <label class="auto-switch b">
+        <input id="auto" type="checkbox">
+        <span>Auto-Fire</span>
+      </label>
+    </div>
+  </section>
+
+  <!-- Leaderboard (top 5, saved in this browser) -->
+  <section class="lb" aria-label="Leaderboard">
+    <h3>🏆 Top 5</h3>
+    <ol id="lb-list"></ol>
+    <button id="lb-clear" class="b mini-btn" type="button">Clear</button>
+  </section>
+
+  <!-- Name entry after a top-5 defeat -->
+  <div id="score-modal" class="crop-modal hidden">
+    <div class="crop-dialog">
+      <div class="crop-header"><h3>🏆 You made the Top 5!</h3></div>
+      <p class="crop-hint" id="lb-info"></p>
+      <input id="lb-name" type="text" class="name-input" placeholder="Your name" maxlength="12" autocomplete="off">
+      <div class="crop-actions">
+        <button id="lb-skip" class="b" type="button">Skip</button>
+        <button id="lb-save" class="b main" type="button">Save score</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Character Customization Drawer -->
+  <details class="set" id="set">
+    <summary>🎭 Customize Characters (tap to open)</summary>
+    <small>Tap "Change photo" on any slot. You crop it first, then it is saved in this browser.</small>
+    <div class="sec"><b>You (4 moods)</b><div class="slots" id="slots-player"></div></div>
+    <div class="sec"><b>Enemies</b><div class="slots" id="slots-enemy"></div></div>
+    <input id="slot-file" type="file" accept="image/*" hidden>
+    <button id="reset-all">Reset all photos to defaults</button>
+    <small id="msg">Photos in the assets/ folder are the defaults. Replacements are saved in this browser only.</small>
+  </details>
+
+  <small style="margin-top: 6px; text-align: center;">
+    💻 PC: Arrows or WASD move, Space shoot, R reload, Q burst, F fullscreen. &nbsp;|&nbsp; 📱 Mobile: Left thumb moves, Right thumb shoots & reloads!
+  </small>
+
+  <!-- Interactive Face Cropping Modal with Rotation & Mirror Flip -->
+  <div id="crop-modal" class="crop-modal hidden">
+    <div class="crop-dialog">
+      <div class="crop-header">
+        <h3>✂️ Crop Photo</h3>
+      </div>
+      <p class="crop-hint">Pick a shape, drag the photo, zoom, then Apply.</p>
+      <div class="crop-transforms">
+        <button id="crop-ar-p" class="b mini-btn" type="button">▯ Portrait</button>
+        <button id="crop-ar-s" class="b mini-btn" type="button">◻ Square</button>
+        <button id="crop-ar-l" class="b mini-btn" type="button">▭ Landscape</button>
+      </div>
+      
+      <div class="crop-canvas-wrapper">
+        <canvas id="crop-canvas" width="280" height="280"></canvas>
+      </div>
+
+      <!-- Zoom & Transform Controls -->
+      <div class="crop-controls">
+        <label for="crop-zoom">🔍 Zoom</label>
+        <input type="range" id="crop-zoom" min="0.5" max="3.5" step="0.02" value="1">
+      </div>
+
+      <div class="crop-transforms">
+        <button id="crop-rotate" class="b mini-btn" type="button">⟳ Rotate 90°</button>
+        <button id="crop-flip" class="b mini-btn" type="button">⇄ Flip Mirror</button>
+      </div>
+
+      <div class="crop-actions">
+        <button id="crop-cancel" class="b">Cancel</button>
+        <button id="crop-apply" class="b main">Apply Face</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modular Game Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/leaderboard.js"></script>
+  <script src="js/skill.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/enemies.js"></script>
+  <script src="js/input.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
